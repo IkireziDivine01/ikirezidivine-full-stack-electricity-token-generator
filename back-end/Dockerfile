@@ -1,11 +1,15 @@
-FROM node:17
+FROM node:16.14-alpine
 
-WORKDIR /elec-meter
+WORKDIR /electricity-meter-seller-backend
 
-COPY package.json /elec-meter/package.json
+COPY ./package.json /electricity-meter-seller-backend
 
-RUN yarn install
+RUN npm install -g npm@8.5.5
 
-COPY . /elec-meter
+RUN npm install --force
 
-CMD [ "yarn","start:debug"]
+COPY . .
+
+EXPOSE 7000
+
+CMD [ "npm","start:debug"]
