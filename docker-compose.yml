@@ -1,0 +1,66 @@
+version: "3"
+services:
+  web:
+    image: nginx
+    volumes:
+      - ./templates:/etc/nginx/templates
+      - db:/var/lib/postgresql/data
+    ports:
+      - "8080:80"
+    environment:
+      - NGINX_HOST=foobar.com
+      - NGINX_PORT=80
+  frontend:
+    container_name: electricity-meter-seller-frontend
+    build: 
+      context: electricity-meter-seller-frontend
+      dockerfile: Dockerfile
+    ports:
+      -'7000:7000'
+  backend:
+    container_name: electricity-meter-seller-backend
+    restart: always
+    build: 
+      context: electricity-meter-seller-backend
+      dockerfile: Dockerfile
+    ports:
+      - "7000:7000"
+    links:
+      - postgres
+    depends_on:
+      - postgres
+    env_file:
+      - .env
+    volumes: 
+      - .:/electricity-meter-seller-backend
+  postgres:
+    container_name: postgres
+    image: postgres
+    ports:
+      - "5432:5432"
+    volumes:
+      - ./postgresdata:/var/lib/postgresql/el-meter
+      - ./src/migrations/dbinit.sql:/docker-entrypoint-initdb.d/dbinit.sql
+    restart: always
+    environment:
+      POSTGRES_USER: divine
+      POSTGRES_PASSWORD: divine
+      POSTGRES_DB: token-gen
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: always
+    environment:
+      PGADMIN_DEFAULT_EMAIL: iikirezidivine@gmail.com
+      PGADMIN_DEFAULT_PASSWORD: divine
+      PGADMIN_LISTEN_PORT: 50
+    ports:
+      - "5050:50"
+    volumes:
+      - pgadmin-data:/var/lib/pgadmin:Z
+    depends_on:
+      - postgres
+volumes:
+  db-data:
+  pgadmin-data:
+  elec-meter:

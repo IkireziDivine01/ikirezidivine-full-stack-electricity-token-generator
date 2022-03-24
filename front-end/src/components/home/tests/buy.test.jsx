@@ -23,3 +23,8 @@ it('should render "Buy Electricity"', () => {
     const p = container.querySelector('p');
     expect(p.textContent).toBe('Buy Electricity');
 });
+
+it("renders button", () => {
+  const div = document.createElement("div");
+  reactDom.render(<button >SUBMIT</button>, div)
+})
